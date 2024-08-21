@@ -1,9 +1,24 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-app.use(morgan("tiny"));
 
 app.use(express.json());
+
+morgan.token("jsonData", (req) => JSON.stringify(req.body));
+app.use(
+  morgan((tokens, req, res) =>
+    [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+      tokens.method(req, res) === "POST" ? JSON.stringify(req.body) : null,
+    ].join(" ")
+  )
+);
 
 const requestLogger = (request, response, next) => {
   console.log("Method ", request.method);
