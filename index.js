@@ -1,6 +1,14 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const cors = require("cors");
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+};
+
+app.use(cors());
+
 app.use(morgan("tiny"));
 
 app.use(express.json());
@@ -14,6 +22,7 @@ const requestLogger = (request, response, next) => {
 };
 app.use(requestLogger);
 
+app.use(express.static("dist"));
 let persons = [
   {
     id: "1",
@@ -93,4 +102,8 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-app.listen(3001);
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
