@@ -4,12 +4,10 @@ const morgan = require("morgan");
 const cors = require("cors");
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://phonebook-f.fly.dev/",
 };
 
-app.use(cors());
-
-app.use(morgan("tiny"));
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -24,19 +22,10 @@ app.use(
       "-",
       tokens["response-time"](req, res),
       "ms",
-      tokens.method(req, res) === "POST" ? JSON.stringify(req.body) : null,
+      tokens.jsonData(req),
     ].join(" ")
   )
 );
-
-const requestLogger = (request, response, next) => {
-  console.log("Method ", request.method);
-  console.log("Path", request.path);
-  console.log("Body", request.body);
-  console.log("---");
-  next();
-};
-app.use(requestLogger);
 
 app.use(express.static("dist"));
 let persons = [

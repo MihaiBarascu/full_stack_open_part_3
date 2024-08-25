@@ -1,15 +1,15 @@
-# fly.toml app configuration file generated for fsopen-p3 on 2024-08-23T16:04:27+03:00
+# fly.toml app configuration file generated for phonebook-b on 2024-08-24T20:01:15+03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'fsopen-p3'
+app = 'phonebook-b'
 primary_region = 'otp'
 
 [build]
-[env]
-  PORT = "3000"
 
+[env]
+  PORT=3000
 
 [http_service]
   internal_port = 3000
