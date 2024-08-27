@@ -2,12 +2,16 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+require("dotenv").config();
+const Person = require("./models/person");
+
+console.log(Person);
 
 const corsOptions = {
   origin: "https://phonebook-f.fly.dev/",
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(express.json());
 
@@ -51,7 +55,9 @@ let persons = [
   },
 ];
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((resp) => {
+    response.json(resp);
+  });
 });
 
 app.get("/info", (request, response) => {
@@ -90,15 +96,15 @@ app.post("/api/persons", (request, response) => {
       return response.status(409).json({ error: "name must me unique" });
     }
 
-    const person = {
+    const person = new Person({
       name: body.name,
       number: body.number,
-      id: String(id),
-    };
-    persons = persons.concat(person);
-    return response.json(person);
-  }
-  return response.status(400).json({ error: "name or number is missing" });
+    });
+    person.save().then((newPrerson) => {
+      response.json(newPrerson);
+    });
+  } else
+    return response.status(400).json({ error: "name or number is missing" });
 });
 
 const unknownEndpoint = (request, response) => {
@@ -107,7 +113,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
