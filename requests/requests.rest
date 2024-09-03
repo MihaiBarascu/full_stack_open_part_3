@@ -1,7 +1,20 @@
 DELETE http://localhost:3001/api/persons/58529
 
 ###
+PUT http://localhost:3001/api/persons/1
+content-type:application/json
+
+{ 
+  "number":"buna ziua"
+}
+
+
+###
 GET http://localhost:3001/api/persons
+
+###
+GET http://localhost:3001/api/persons/66cb0a3d9dbe0bbbcddea0d7
+
 
 ###
 POST http://localhost:3001/api/persons
