@@ -5,10 +5,6 @@ const cors = require("cors");
 require("dotenv").config();
 const Person = require("./models/person");
 
-const corsOptions = {
-  origin: "https://phonebook-f.fly.dev/",
-};
-
 app.use(cors());
 
 app.use(express.json());
@@ -66,7 +62,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params["id"])
-    .then((deleted) => response.status(204).end())
+    .then(() => response.status(204).end())
     .catch((error) => {
       next(error);
     });
