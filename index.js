@@ -75,19 +75,16 @@ app.delete("/api/persons/:id", (request, response, next) => {
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
-  if (body.name && body.number) {
-    const person = new Person({
-      name: body.name,
-      number: body.number,
-    });
-    person
-      .save()
-      .then((newPerson) => {
-        response.json(newPerson);
-      })
-      .catch((error) => next(error));
-  } else
-    return response.status(400).json({ error: "name or number is missing" });
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+  person
+    .save()
+    .then((newPerson) => {
+      response.json(newPerson);
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
@@ -97,7 +94,7 @@ app.put("/api/persons/:id", (request, response, next) => {
       name: request.body.name,
       number: request.body.number,
     },
-    { new: true }
+    { new: true, runValidators: true, context: "query" }
   )
     .then((updatedNumber) => response.json(updatedNumber))
     .catch((error) => {
@@ -111,12 +108,17 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint);
 
-app.use((err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
   if (err.name === "CastError") {
     return res.status(400).send({ error: "malformated id" });
   }
+  if (err.name === "ValidationError") {
+    return res.status(400).send({ error: err.message });
+  }
   next(err);
-});
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 
